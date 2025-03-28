@@ -1,0 +1,17 @@
+# .air.toml
+# Конфигурация для air
+
+# Папка с исходным кодом
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  # Компиляция при изменении исходного кода
+  bin = "taskflow"  # Путь до скомпилированного бинарника
+  cmd = "go build -o taskflow"
+  include = ["**/*.go"]
+  exclude = ["**/tmp/**", "**/vendor/**"]
+
+[log]
+  time = true
+  colors = true

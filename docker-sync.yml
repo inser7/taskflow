@@ -1,0 +1,11 @@
+version: "2"
+syncs:
+  frontend-sync:
+    src: './frontend'  # Путь на локальной машине
+    sync_strategy: 'native_osx'  # Для macOS используйте 'native_osx', для Linux/Windows используйте 'unison'
+    exclude: ['.git', 'node_modules', 'vendor']  # Исключите ненужные файлы
+
+  backend-sync:
+    src: './backend'  # Путь на локальной машине
+    sync_strategy: 'native_osx'  # Для macOS используйте 'native_osx', для Linux/Windows используйте 'unison'
+    exclude: ['.git', 'node_modules', 'vendor']  # Исключите ненужные файлы

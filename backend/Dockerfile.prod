@@ -1,0 +1,42 @@
+# Build stage
+FROM golang:1.24 AS builder
+
+WORKDIR /app
+
+COPY . .
+
+# Обновление зависимостей
+RUN go mod tidy
+
+# Установка air с использованием нового пути
+RUN go install github.com/air-verse/air@latest && \
+    ls -l $(go env GOPATH)/bin && \
+    cp $(go env GOPATH)/bin/air /usr/local/bin/air && \
+    ls -l /usr/local/bin && \
+    chmod +x /usr/local/bin/air
+
+# Run stage
+FROM debian:bookworm-slim
+
+# Обновление системы для актуальной версии glibc
+RUN apt-get update && apt-get upgrade -y && apt-get install -y libc6
+
+WORKDIR /root/
+
+# Копирование скомпилированных файлов из стадии сборки
+COPY --from=builder /app /app
+
+# Копирование конфигурации air
+COPY --from=builder /app/.air.toml /app/.air.toml
+
+# Копирование бинарного файла air
+COPY --from=builder /usr/local/bin/air /usr/local/bin/air
+
+# Установка рабочей директории
+WORKDIR /app
+
+# Открытие порта 8080
+EXPOSE 8080
+
+# Запуск приложения с использованием air для автоматической перезагрузки
+CMD ["air"]
