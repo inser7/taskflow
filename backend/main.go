@@ -61,7 +61,11 @@ func main() {
 	mux.HandleFunc("/api/login", server.handleLogin)
 
 	// Configure CORS
-	handler := cors.Default().Handler(mux)
+	handler := cors.New(cors.Options{
+		AllowedOrigins: []string{"http://localhost:3000"}, // Указываем адрес вашего фронтенда
+		AllowedHeaders: []string{"Authorization", "Content-Type"},
+		AllowedMethods: []string{"GET", "POST", "DELETE", "OPTIONS"},
+	}).Handler(mux)
 
 	// Start the server
 	log.Println("Server started at http://localhost:8080")
@@ -166,7 +170,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 	claims := &Claims{
 		Username: user.Username,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: jwt.At(expirationTime),
+			ExpiresAt: expirationTime.Unix(), // Используйте Unix timestamp
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
